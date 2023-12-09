@@ -1,0 +1,36 @@
+* { margin: 0; }
+
+html {
+	/* this allows `rem`s to be written as you would `px`, ie font-size: 16rem */
+	font-size: 6.25%;
+	--icon-size: 32px;
+}
+
+body {
+	font-size: 16rem;
+}
+
+main {
+	display: flex;
+	width: 100vw;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+}
+
+#debug {
+	display: none;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+}
+#visualizer {
+	fill: pink;
+	border: 1px solid black;
+}
+
+.player-icon {
+	width: var(--icon-size);
+	height: var(--icon-size);
+	background-color: red;
+}
