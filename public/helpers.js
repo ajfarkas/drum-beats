@@ -1,7 +1,7 @@
 export const $ = (selector, element) => (element || document).querySelector(selector);
 export const $$ = (selector, element) => (element || document).querySelectorAll(selector);
 export const $id = (selector, element) => (element || document).getElementById(selector);
-/* Create Element
+/* createElement: create a new DOM element
  * @param element (String): string name of element to be created.
  * @param attrs (Object): attributes to add to element, key is name, val value
  * @param children (String|Array): text string or element children to add to el
