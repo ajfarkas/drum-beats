@@ -57,12 +57,12 @@ export class UserAudioSession {
 			const isGTLP = !lastPeak.val || (decibel > lastPeak.val);
 
 			if (!isFarFromLP && isGTLP) {
-				peaks.splice(peaks.indexOf(lastPeak.pos), 1);
+				peaks.splice(peaks.indexOf(lastPeak), 1);
 			}
 			if (isGTPrev && isGTNext && (isFarFromLP || isGTLP)) {
-				peaks.push(i); // frequencyData.rateValues[i]);
 				lastPeak.pos = i;
 				lastPeak.val = decibel;
+				peaks.push(Object.assign({}, lastPeak));
 			}
 		}
 
@@ -92,7 +92,7 @@ export class UserAudioSession {
 		const drawBars = this.drawBars.bind(this);
 		const drawVisual = requestAnimationFrame(drawBars);
 		analyzer.getByteFrequencyData(dataArray);
-		const peaks = findPeaks(dataArray);
+		const peaks = findPeaks(dataArray).map(({pos, val}) => pos);
 
 		canvasCtx.fillStyle = 'rgb(255,255,255)';
 		canvasCtx.fillRect(0,0,width,height);
