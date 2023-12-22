@@ -21,14 +21,41 @@ export class UserAudioSession {
 			getUserMedia({ audio: true })
 			.then(stream => {
 				const source = audioCtx.createMediaStreamSource(stream);
+				this.initFrequencyData(source);
 				if (this.debug) {
 					this.initDebug();
 					this.visualize(source);
 				}
+				this.findPercussion(source);
 			})
 			.catch(error => {
 				console.error('Error in GUM:', error);
 			});
+	}
+
+	initFrequencyData(source) {
+		this.frequencyData = {};
+		const {
+			audioCtx,
+			analyzer,
+			frequencyData
+		} = this;
+
+		source.connect(analyzer);
+
+		analyzer.fftSize = 2048;
+		this.bufferLength = analyzer.frequencyBinCount;
+		const { bufferLength } = this;
+		this.dataArray = new Uint8Array(bufferLength);
+		frequencyData.sampleRate = audioCtx.sampleRate;
+		frequencyData.arrayLen = bufferLength;
+		frequencyData.maxFrequency = audioCtx.sampleRate / 2;
+		const frequencyInterval = frequencyData.maxFrequency / bufferLength;
+		// frequency in Hz
+		frequencyData.rateValues = new Array(bufferLength);
+		for (let rv = 0; rv < bufferLength; rv++) {
+			frequencyData.rateValues[rv] = frequencyInterval * (rv + 1);
+		}
 	}
 
 	initDebug() {
@@ -73,9 +100,15 @@ export class UserAudioSession {
 	 * @param stream (Object): Audio MediaStreamSource
 	 * @returns (Boolean) whether the given sample is the start of percussion
 	**/
-	findPercusion(stream) {
+	findPercussion(stream) {
 		const isPerscussive = false;
-		// WIP
+		const dataLen = stream.length;
+
+		for (let i = 0; i < dataLen; i++) {
+
+		}
+		// const totalVolume =
+		// this.lastTotalVolume
 	}
 
 	drawBars() {
@@ -121,32 +154,13 @@ export class UserAudioSession {
 	visualize(source) {
 		this.frequencyData = {};
 		const {
-			audioCtx,
-			analyzer,
 			canvas,
-			canvasCtx,
-			frequencyData
+			canvasCtx
 		} = this;
 
 		this.width = canvas.width;
 		this.height = canvas.height;
 		canvasCtx.clearRect(0, 0, this.width, this.height);
-
-		source.connect(analyzer);
-
-		analyzer.fftSize = 2048;
-		this.bufferLength = analyzer.frequencyBinCount;
-		const { bufferLength } = this;
-		this.dataArray = new Uint8Array(bufferLength);
-		frequencyData.sampleRate = audioCtx.sampleRate;
-		frequencyData.arrayLen = bufferLength;
-		frequencyData.maxFrequency = audioCtx.sampleRate / 2;
-		const frequencyInterval = frequencyData.maxFrequency / bufferLength;
-		// frequency in Hz
-		frequencyData.rateValues = new Array(bufferLength);
-		for (let rv = 0; rv < bufferLength; rv++) {
-			frequencyData.rateValues[rv] = frequencyInterval * (rv + 1);
-		}
 
 		this.drawBars();
 	}
